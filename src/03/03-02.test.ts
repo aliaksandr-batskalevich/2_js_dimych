@@ -1,14 +1,38 @@
 import {CityType} from "../02/02_02";
-import {addMoneyToBudget, createMessage, repairHouse, toFireStaff, toHireStaff} from "./03";
+import {
+    addMoneyToBudget,
+    createMessage,
+    filterCourses,
+    repairHouse,
+    toFireStaff,
+    toHireStaff,
+    CourseType,
+    filteredHouses,
+    filteredFireStation,
+    dimychTransformator,
+    helloPhrase,
+    getStreetCityTitle,
+    createGreetingfMessages
+} from "./03";
+
+export type PeopleType = {
+    name: string
+    age: number
+}
+export type PeoplesType = Array<PeopleType>
+
 
 let city: CityType;
+let courses: Array<CourseType>;
+let peoples: PeoplesType;
+let phraseArr: Array<string>
 
 beforeEach(() => {
     city = {
         title: "New York",
         houses: [{
             buildedAt: 2012,
-            repaired: false,
+            repaired: true,
             address: {
                 number: 100,
                 street: {
@@ -45,18 +69,71 @@ beforeEach(() => {
                     title: 'Central Str'
                 }
             }
-        },{
-                type: "FIRE-STATION",
-                budget: 500000,
-                staffCount: 1000,
-                address: {
-                    street: {
-                        title: 'South Str'
-                    }
+        }, {
+            type: "FIRE-STATION",
+            budget: 500000,
+            staffCount: 1000,
+            address: {
+                street: {
+                    title: 'South Str'
                 }
-            }],
+            }
+        }],
         citizensNumber: 1000000
-    }
+    };
+    courses = [
+        {name: 'JS', price: 100},
+        {name: 'TS', price: 150},
+        {name: 'React', price: 180}
+    ];
+    peoples = [
+        {name: 'Alex Batskalevich', age: 33},
+        {name: 'Marry Batskalevich', age: 31},
+        {name: 'Andrey Schitljak', age: 26},
+        {name: 'Olga Romanenko', age: 25}
+    ];
+    phraseArr = [''];
+});
+
+test('create greeting messages for streets', () => {
+    let messagesArr: Array<string> = createGreetingfMessages(city);
+
+    expect(messagesArr.length).toBe(5);
+})
+
+test.skip('Street name should be in array', () => {
+    let streetArr: Array<string> = getStreetCityTitle(city);
+    expect(streetArr.length).toBe(3);
+    expect(streetArr[0]).toBe('1. White street');
+})
+
+test.skip('Peoples should be HI', () => {
+    phraseArr = helloPhrase(peoples);
+    expect(phraseArr.length).toBe(4);
+    expect(phraseArr[0].split(' ')[1]).toBe('Batskalevich');
+})
+
+test.skip('Peoples should be with skills', () => {
+    let peoplesAfterSchool = dimychTransformator(peoples)
+    expect(peoplesAfterSchool[0].stack.length).toBe(5);
+    expect(peoplesAfterSchool[0].firstName).toBe('Alex');
+    expect(peoplesAfterSchool.length).toBe(4);
+})
+
+test.skip('Array should be with fire-station', () => {
+    let fireStationArray = filteredFireStation(city);
+    expect(fireStationArray.length).toBe(1);
+})
+
+test.skip('houses should be repaired', () => {
+    let repairedHousesCity = filteredHouses(city, false);
+    expect(repairedHousesCity.houses.length).toBe(2);
+})
+
+test.skip('Price should be Ok', () => {
+    let filteredCourses = filterCourses(courses, 150);
+    expect(filteredCourses.length).toBe(2);
+    expect(filteredCourses[0].name).toBe('JS');
 });
 
 test.skip('budget should be changed for HOSPITAL', () => {
@@ -84,7 +161,7 @@ test.skip('staff should be repaired', () => {
     expect(city.governmentBuildings[0].staffCount).toBe(220)
 });
 
-test('Greeting message should be correct', () => {
+test.skip('Greeting message should be correct', () => {
     const message = createMessage(city);
     expect(message).toBe("Hello New York! I want you be happy. All 1000000 men.")
 })
